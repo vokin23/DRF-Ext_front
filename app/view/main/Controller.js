@@ -3,58 +3,72 @@ Ext.define('App.view.Controller', {
     alias: 'controller.main',
 
     onCreateWorkerClick: function() {
-        var worksStore = Ext.create('MyApp.store.Works'); // Создаем хранилище работ
-        worksStore.load(); // Загружаем данные о работах
+        var worksStore = Ext.create('MyApp.store.Works');
+        worksStore.load();
+
+        var form = Ext.create('Ext.form.Panel', {
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: 'Имя',
+                name: 'first_name'
+            },{
+                xtype: 'textfield',
+                fieldLabel: 'Фамилия',
+                name: 'second_name'
+            },{
+                xtype: 'textfield',
+                fieldLabel: 'Отчество',
+                name: 'otchestvo'
+            },{
+                xtype: 'datefield',
+                fieldLabel: 'Дата рождения',
+                name: 'date_rojdenia',
+                format: 'Y-m-d'
+            },{
+                xtype: 'combobox',
+                fieldLabel: 'Работа',
+                name: 'work',
+                store: worksStore,
+                displayField: 'name_work',
+                valueField: 'name_work'
+            },{
+                xtype: 'textfield',
+                fieldLabel: 'Ставка',
+                name: 'stavka'
+            }]
+        });
 
         Ext.create('Ext.window.Window', {
             title: 'Создать сотрудника',
             modal: true,
             layout: 'fit',
             padding: '10 20 10 20',
-            items: {
-                xtype: 'form',
-                defaultType: 'textfield',
-                padding: '20 0 0 0',
-                items: [{
-                    fieldLabel: 'Имя',
-                    name: 'first_name'
-                },{
-                    fieldLabel: 'Фамилия',
-                    name: 'second_name'
-                },{
-                    fieldLabel: 'Отчество',
-                    name: 'otchestvo'
-                },{
-                    fieldLabel: 'Дата рождения',
-                    name: 'date_rojdenia',
-                    xtype: 'datefield',
-                    format: 'd.m.Y'
-                },{
-                    xtype: 'combobox',
-                    fieldLabel: 'Работа',
-                    name: 'work',
-                    store: worksStore,
-                    displayField: 'name_work', // Поле для отображения рабочей должности
-                    valueField: 'name_work' // Уникальный идентификатор рабочей должности
-                },{
-                    fieldLabel: 'Ставка',
-                    name: 'stavka'
-                },{
-                    fieldLabel: 'Зарплата',
-                    name: 'salary'
-                }],
-                buttons: [{
-                    text: 'Сохранить',
-                    handler: function() {
-                        // Логика сохранения данных
-                    }
-                },{
-                    text: 'Отмена',
-                    handler: function() {
+            items: form,
+            buttons: [{
+                text: 'Сохранить',
+                handler: function() {
+                    var form = this.up('window').down('form').getForm();
+                    if (form.isValid()) {
+                        Ext.Ajax.request({
+                            url: 'http://127.0.0.1:8000/api/worker/',
+                            method: 'POST',
+                            jsonData: form.getValues(),
+                            success: function(response){
+                                console.log('Данные о сотруднике успешно сохранены');
+                            },
+                            failure: function(response){
+                                console.error('Ошибка при сохранении данных о сотруднике');
+                            }
+                        });
                         this.up('window').close();
                     }
-                }]
-            }
+                }
+            },{
+                text: 'Отмена',
+                handler: function() {
+                    this.up('window').close();
+                }
+            }]
         }).show();
     },
 
