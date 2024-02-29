@@ -12,7 +12,4 @@ Ext.application({
         // so that application classes do not need to require each other.
         'MyApp.*'
     ],
-
-    // The name of the initial view to create.
-    mainView: 'MyApp.view.main.Main'
 });
