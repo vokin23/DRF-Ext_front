@@ -1,6 +1,67 @@
 Ext.define('App.view.Controller', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.main'
+    alias: 'controller.main',
+
+    onCreateWorkerClick: function() {
+        var worksStore = Ext.create('MyApp.store.Works'); // Создаем хранилище работ
+        worksStore.load(); // Загружаем данные о работах
+
+        Ext.create('Ext.window.Window', {
+            title: 'Создать сотрудника',
+            modal: true,
+            layout: 'fit',
+            padding: '10 20 10 20',
+            items: {
+                xtype: 'form',
+                defaultType: 'textfield',
+                padding: '20 0 0 0',
+                items: [{
+                    fieldLabel: 'Имя',
+                    name: 'first_name'
+                },{
+                    fieldLabel: 'Фамилия',
+                    name: 'second_name'
+                },{
+                    fieldLabel: 'Отчество',
+                    name: 'otchestvo'
+                },{
+                    fieldLabel: 'Дата рождения',
+                    name: 'date_rojdenia',
+                    xtype: 'datefield',
+                    format: 'd.m.Y'
+                },{
+                    xtype: 'combobox',
+                    fieldLabel: 'Работа',
+                    name: 'work',
+                    store: worksStore,
+                    displayField: 'name_work', // Поле для отображения рабочей должности
+                    valueField: 'name_work' // Уникальный идентификатор рабочей должности
+                },{
+                    fieldLabel: 'Ставка',
+                    name: 'stavka'
+                },{
+                    fieldLabel: 'Зарплата',
+                    name: 'salary'
+                }],
+                buttons: [{
+                    text: 'Сохранить',
+                    handler: function() {
+                        // Логика сохранения данных
+                    }
+                },{
+                    text: 'Отмена',
+                    handler: function() {
+                        this.up('window').close();
+                    }
+                }]
+            }
+        }).show();
+    },
+
+    onCreatePositionClick: function() {
+        // Логика создания должности
+        console.log('Создание должности');
+    }
 });
 
 Ext.define('MyApp.view.workers', {

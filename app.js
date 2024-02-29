@@ -12,4 +12,6 @@ Ext.application({
         // so that application classes do not need to require each other.
         'MyApp.*'
     ],
+
+    mainView: 'MyApp.view.main.Main'
 });
